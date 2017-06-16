@@ -1,13 +1,12 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 
 <dom-module id="hero-transition">
   <template>
     <style>
       :host {
-        display: block;
+        display: none;
       }
-    </style>
-    <h2>Hello [[prop1]]!</h2>
+    </style>    
   </template>
 
   <script>
@@ -23,11 +22,41 @@
       static get is() { return 'hero-transition'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'hero-transition'
+          shared: {
+            type: Object,
+            value: {
+              name: null,
+              fromPage: null,
+              toPage: null,
+              id: null,
+              timing: null
+            }
           }
         };
+      }
+
+      fire(){
+        let shared = this.shared;
+        if (!shared) {
+          return;
+        }
+
+        let fromRect = shared.from.getBoundingClientRect();
+        let toRect = shared.to.getBoundingClientRect();
+        let deltaLeft = fromRect.left - toRect.left;
+        let deltaTop = fromRect.top - toRect.top;
+        let deltaWidth = fromRect.width / toRect.width;
+        let deltaHeight = fromRect.height / toRect.height;
+
+        this._effect = new KeyframeEffect(shared.to, [
+          {'transform': 'translate(' + deltaLeft + 'px,' + deltaTop + 'px) scale(' + deltaWidth + ',' + deltaHeight + ')'},
+          {'transform': 'none'}
+        ], this.timingFromConfig(config));
+
+        this.setPrefixedProperty(shared.to, 'transformOrigin', '0 0');
+        shared.to.style.zIndex = 10000;
+        shared.from.style.visibility = 'hidden';
+        return this._effect;
       }
     }
 
