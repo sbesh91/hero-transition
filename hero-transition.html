@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="hero-transition">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]!</h2>
+  </template>
+
+  <script>
+    /**
+     * `hero-transition`
+     * Web animations api powered page change transition
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class HeroTransition extends Polymer.Element {
+      static get is() { return 'hero-transition'; }
+      static get properties() {
+        return {
+          prop1: {
+            type: String,
+            value: 'hero-transition'
+          }
+        };
+      }
+    }
+
+    window.customElements.define(HeroTransition.is, HeroTransition);
+  </script>
+</dom-module>
