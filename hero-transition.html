@@ -27,7 +27,9 @@
             value: {
               name: null,
               fromPage: null,
+              from: null,
               toPage: null,
+              to: null,
               id: null,
               timing: null
             }
@@ -35,28 +37,33 @@
         };
       }
 
-      fire(){
-        let shared = this.shared;
-        if (!shared) {
+      fire(){      
+        if (!this.shared) {
           return;
         }
+        
+        let shared = this.shared;
 
-        let fromRect = shared.from.getBoundingClientRect();
-        let toRect = shared.to.getBoundingClientRect();
+        let fromRect = shared.fromPage.getBoundingClientRect();
+        let toRect = shared.toPage.getBoundingClientRect();
         let deltaLeft = fromRect.left - toRect.left;
         let deltaTop = fromRect.top - toRect.top;
         let deltaWidth = fromRect.width / toRect.width;
         let deltaHeight = fromRect.height / toRect.height;
 
-        this._effect = new KeyframeEffect(shared.to, [
+        let effect = new KeyframeEffect(shared.toPage, [
           {'transform': 'translate(' + deltaLeft + 'px,' + deltaTop + 'px) scale(' + deltaWidth + ',' + deltaHeight + ')'},
           {'transform': 'none'}
-        ], this.timingFromConfig(config));
+        ], shared.timing);
 
-        this.setPrefixedProperty(shared.to, 'transformOrigin', '0 0');
-        shared.to.style.zIndex = 10000;
-        shared.from.style.visibility = 'hidden';
-        return this._effect;
+        let anim = new Animation(effect, document.timeline);
+
+        shared.toPage.style['transformOrigin'] = '0 0';
+        shared.toPage.style.zIndex = 10000;
+        shared.toPage.style.visibility = 'visible';
+        shared.fromPage.style.visibility = 'hidden';
+
+        anim.play();
       }
     }
 
